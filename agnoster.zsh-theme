@@ -30,6 +30,7 @@ PRIMARY_FG=black
 
 # Characters
 SEGMENT_SEPARATOR="\ue0b0"
+RSEGMENT_SEPARATOR="\ue0b2"
 PLUSMINUS="\u00b1"
 BRANCH="\ue0a0"
 DETACHED="\u27a6"
@@ -52,6 +53,23 @@ prompt_segment() {
   CURRENT_BG=$1
   [[ -n $3 ]] && print -n $3
 }
+
+# Begin an RPROMPT segment
+# Takes two arguments, background and foreground. Both can be omitted,
+# rendering default background/foreground.
+rprompt_segment() {
+  local bg fg
+  [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
+  [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
+  if [[ $CURRENT_BG != 'NONE' && $1 != $CURRENT_BG ]]; then
+    echo -n " %{%K{$CURRENT_BG}%F{$1}%}$RSEGMENT_SEPARATOR%{$bg%}%{$fg%} "
+  else
+    echo -n "%F{$1}%{%K{default}%}$RSEGMENT_SEPARATOR%{$bg%}%{$fg%} "
+  fi
+  CURRENT_BG=$1
+  [[ -n $3 ]] && echo -n $3
+}
+
 
 # End the prompt, closing any open segments
 prompt_end() {
@@ -101,6 +119,14 @@ prompt_git() {
   fi
 }
 
+# PHP: output current php version
+prompt_php() {
+  if [[ $(type nvm) =~ 'nvm is a shell function' ]]; then
+    local v=$(php -v | egrep "PHP (\d.\d.\d) \(cli\)" | awk '{ print $2 }')
+  fi
+  [[ $v != '' ]] && rprompt_segment blue $PRIMARY_FG "PHP $v"
+}
+
 # Dir: current working directory
 prompt_dir() {
   prompt_segment blue $PRIMARY_FG ' %~ '
@@ -131,9 +157,15 @@ prompt_agnoster_main() {
   prompt_end
 }
 
+# Right prompt
+prompt_agnoster_right() {
+  prompt_php
+}
+
 prompt_agnoster_precmd() {
   vcs_info
   PROMPT='%{%f%b%k%}$(prompt_agnoster_main) '
+  RPROMPT='%{%f%b%k%}$(prompt_agnoster_right) '
 }
 
 prompt_agnoster_setup() {

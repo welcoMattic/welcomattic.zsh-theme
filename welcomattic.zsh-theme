@@ -1,7 +1,8 @@
 # vim:ft=zsh ts=2 sw=2 sts=2
 #
-# agnoster's Theme - https://gist.github.com/3712874
+# welcomattic's Theme - https://gist.github.com/welcoMattic/e29f45217d238b2379e2a92c24397dab
 # A Powerline-inspired theme for ZSH
+# Heavily inspired from agnoster's theme - https://gist.github.com/3712874
 #
 # # README
 #

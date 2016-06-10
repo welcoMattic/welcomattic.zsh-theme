@@ -123,7 +123,7 @@ prompt_git() {
 # PHP: output current php version
 prompt_php() {
   if [[ $(type nvm) =~ 'nvm is a shell function' ]]; then
-    local v=$(php -v | egrep "PHP (\d.\d.\d) \(cli\)" | awk '{ print $2 }')
+    local v=$(php -v | egrep "PHP (\d.\d.\d+) \(cli\)" | awk '{ print $2 }')
   fi
   [[ $v != '' ]] && rprompt_segment blue $PRIMARY_FG "PHP $v"
 }
